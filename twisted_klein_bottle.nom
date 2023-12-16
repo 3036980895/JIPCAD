@@ -1,0 +1,25 @@
+### Bank ###
+bank slider
+    set speed 0.5 -1 1 0.1
+    set x 0 0 1 1
+    set y 0 0 1 1
+    set z 1 0 1 1
+    list(speed, x, y, z)
+endbank
+
+### Background ###
+backgroundcolor (0 0 0) endbackgroundcolor
+
+### Surfaces ###
+surface twisted_klein_bottle_surface color (85/255 85/255 127/255) endsurface
+
+### Twisted Klein Bottle ###
+genparametricsurf twisted_klein_bottle funcX [(3+cos(v/2)*sin(u)-sin(v/2)*sin(2*u))*cos(v)] funcY [(3+cos(v/2)*sin(u)-sin(v/2)*sin(2*u))*sin(v)] funcZ [(sin(v/2)*sin(u)+cos(v/2)*sin(2*u))] (0 3.14159 0 6.28318 250 250) endgenparametricsurf
+
+### Scene ###
+group scene
+    instance twisted_klein_bottle_inst_1 twisted_klein_bottle surface twisted_klein_bottle_surface endinstance
+    instance twisted_klein_bottle_inst_2 twisted_klein_bottle rotate (1 0 0) (180) surface twisted_klein_bottle_surface endinstance
+endgroup
+
+instance scene_inst scene rotate ($slider.x $slider.y $slider.z) (1.5 * $slider.speed * $frame) endinstance

@@ -1,0 +1,114 @@
+### Bank ###
+bank slider
+    set x 0 -1 1 0.1
+    set y 0 -1 1 0.1
+    set speed 0 -1 1 0.1
+    set r 140/255 0 1 0.1
+    set g 80/255 0 1 0.1
+    set b 20/255 0 1 0.1
+    list(x, y, speed, r, g, b)
+endbank
+
+### Background ###
+backgroundcolor (170/255 255/255 255/255) endbackgroundcolor
+###backgroundcolor ($slider.r $slider.g $slider.b) endbackgroundcolor
+
+### Surfaces ###
+surface table_surface color ($slider.r $slider.g $slider.b) endsurface
+surface plate_surface color (211/255 211/255 211/255) endsurface
+surface crust_surface color (243/255 198/255 129/255) endsurface
+surface cheese_surface color (250/255 190/255 70/255) endsurface
+surface pepperoni_surface color (220/255 107/255 41/255) endsurface
+surface pizza_table_surface color (1 1 1) endsurface
+
+### Table ###
+point sq1 (-1 1 0) endpoint
+point sq2 (-1 -1 0) endpoint
+point sq3 (1 -1 0) endpoint
+point sq4 (1 1 0) endpoint
+
+mesh cube
+    face side (sq1 sq2 sq3 sq4 sq1) endface
+endmesh
+
+group halfCube
+    instance sCube cube rotate (1 0 0) (180) endinstance
+    instance lid cube translate (0 0 2) endinstance
+    instance leftSide cube rotate (1 0 0) (90) translate (0 -1 1) surface table_surface endinstance
+endgroup
+
+group fullCube
+    instance sHalfCube halfCube rotate (1 0 1) (180) translate (-1 0 1) surface table_surface endinstance
+    instance otherHalf halfCube surface table_surface endinstance
+endgroup
+
+### Plate ###
+cylinder plate (4.75 0.2 360 20 topcap botcap) endcylinder
+
+### Crust ###
+circle crust_path (25 250) endcircle
+
+point c1 (2 0 0) endpoint
+point c2 (1.932 0.518 0) endpoint
+point c3 (1.414 1.414 0) endpoint
+point c4 (0.518 1.932 0) endpoint
+point c5 (0 2 0) endpoint
+point c6 (-0.518 1.932 0) endpoint
+point c7 (-1.414 1.414 0) endpoint
+point c8 (-1.932 0.518 0) endpoint
+point c9 (-2 0 0) endpoint
+point c10 (-1.932 -0.518 0) endpoint
+point c11 (-1.414 -1.414 0) endpoint
+point c12 (-0.518 -1.932 0) endpoint
+point c13 (0 -2 0) endpoint
+point c14 (0.518 -1.932 0) endpoint
+point c15 (1.414 -1.414 0) endpoint
+point c16 (1.932 -0.518 0) endpoint
+polyline crust_cs (c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 c16 c1) endpolyline
+
+sweep crust
+    crosssection crust_cs endcrosssection
+    path crust_path mintorsion azimuth (0) twist (0) endpath
+endsweep
+
+### Cheese ###
+cylinder cheese (4 0.1 360 20 topcap botcap) endcylinder
+
+### Pepperonis ###
+cylinder pepperoni (0.5 0.1 360 20 topcap botcap) endcylinder
+
+group pepperonis
+    instance pepperoni_inst pepperoni scale (0.9 0.9 1) translate (2.5 0.25 0.2) surface pepperoni_surface endinstance
+    instance pepperoni_inst pepperoni scale (0.9 0.9 1) translate (1.5 2 0.2) surface pepperoni_surface endinstance
+    instance pepperoni_inst pepperoni translate (-1 -0.5 0.2) surface pepperoni_surface endinstance
+    instance pepperoni_inst pepperoni translate (1 -3 0.2) surface pepperoni_surface endinstance
+    instance pepperoni_inst pepperoni scale (0.9 0.9 1) translate (-0.5 1.5 0.2) surface pepperoni_surface endinstance
+    instance pepperoni_inst pepperoni scale (0.9 0.9 1) translate (2 -2 0.2) surface pepperoni_surface endinstance
+    instance pepperoni_inst pepperoni translate (-1.5 -2.5 0.2) surface pepperoni_surface endinstance
+    instance pepperoni_inst pepperoni translate (-1 2.5 0.2) surface pepperoni_surface endinstance
+    instance pepperoni_inst pepperoni scale (0.9 0.9 1) translate (-2.5 0.5 0.2) surface pepperoni_surface endinstance
+    instance pepperoni_inst pepperoni translate (1.25 -0.75 0.2) surface pepperoni_surface endinstance
+endgroup
+
+### Pizza Table ###
+cylinder lid (0.75 0.1 360 20 topcap botcap) endcylinder
+cylinder leg (0.05 1.25 360 20 topcap botcap) endcylinder
+
+group pizza_table
+    instance lid_instance lid translate (0 0 1.15) surface pizza_table_surface endinstance
+    instance leg_instance leg translate (0 0.75 0) surface pizza_table_surface endinstance
+    instance leg_instance leg translate (-0.65 -0.375 0) surface pizza_table_surface endinstance
+    instance leg_instance leg translate (0.65 -0.375 0) surface pizza_table_surface endinstance
+endgroup
+
+### Scene ###
+group scene
+    instance table_instance fullCube scale (5.5 5.5 0.5) translate (0 0 -1.15) endinstance
+    instance plate_inst plate translate (0 0 -0.15) surface plate_surface endinstance
+    instance crust_inst crust scale (0.15 0.15 0.15) translate (0 0 0.3) surface crust_surface endinstance
+    instance cheese_inst cheese translate (0 0 0.15) surface cheese_surface endinstance
+    instance pepperonis_instance pepperonis endinstance
+    instance pizza_table_inst pizza_table scale (0.75 0.75 0.75) translate (3 * $slider.x 3 * $slider.y 0.1) endinstance
+endgroup
+
+instance scene_inst scene translate (0 0 {expr 0.25 * sin(0.5 * $slider.speed * $frame)}) rotate (0 0 1) (1.5 * $slider.speed * $frame) endinstance

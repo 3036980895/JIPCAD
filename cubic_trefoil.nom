@@ -1,0 +1,65 @@
+### Bank ###
+bank slider
+    set speed 0.5 -1 1 0.1
+    set vertices 4 3 100 1
+    set azimuth 45 -180 180 1
+    set twist 0 -180 180 1
+    list(speed, vertices, azimuth, twist)
+endbank
+
+### Background ###
+backgroundcolor (0 0 0) endbackgroundcolor
+
+### Surfaces ###
+surface ct_surface color (85/255 85/255 127/255) endsurface
+surface ring_surface color (189/255 186/255 199/255) endsurface
+
+### Cubic Trefoil ###
+circle ctcs ({expr 0.1 * sin($slider.speed * $frame) + 0.25} $slider.vertices) endcircle
+
+point ctp1 (1 0 0) endpoint
+point ctp2 (0 0 0) endpoint
+point ctp3 (0 2 0) endpoint
+point ctp4 (0 2 4) endpoint
+point ctp5 (3 2 4) endpoint
+point ctp6 (3 1 4) endpoint
+point ctp7 (3 1 2) endpoint
+point ctp8 (-1 1 2) endpoint
+point ctp9 (-1 4 2) endpoint
+point ctp10 (-1 4 3) endpoint
+point ctp11 (1 4 3) endpoint
+point ctp12 (1 0 3) endpoint
+polyline ctpath (ctp1 ctp2 ctp3 ctp4 ctp5 ctp6 ctp7 ctp8 ctp9 ctp10 ctp11 ctp12 ctp1 ctp2) endpolyline
+
+sweep ct
+    crosssection ctcs endcrosssection
+    path ctpath mintorsion azimuth ($slider.azimuth) twist ($slider.twist) endpath
+endsweep
+
+### Ring ###
+circle ringct ({expr 0.1 * sin($slider.speed * $frame) + 0.25} $slider.vertices) endcircle
+
+point rp1 (1 1 0) endpoint
+point rp2 (-1 1 0) endpoint
+point rp3 (-1 -1 0) endpoint
+point rp4 (1 -1 0) endpoint
+polyline ringpath (rp1 rp2 rp3 rp4 rp1 rp2) endpolyline
+
+sweep ring
+    crosssection ringct endcrosssection
+    path ringpath mintorsion azimuth ($slider.azimuth) twist ($slider.twist) endpath
+endsweep
+
+group rings
+    instance ring_inst1 ring translate (1 0 1) surface ring_surface endinstance
+    instance ring_inst2 ring rotate (0 1 0) (90) translate (2 2 4) surface ring_surface endinstance
+    instance ring_inst3 ring rotate (1 0 0) (90) translate (-1 3 2) surface ring_surface endinstance
+endgroup
+
+### Scene ###
+group scene
+    instance ct_inst ct translate (-1 -2 -2) surface ct_surface endinstance
+    instance rings_inst rings translate (-1 -2 -2) endinstance
+endgroup
+
+instance scene_inst scene rotate (0 0 1) (1.5 * $slider.speed * $frame) endinstance

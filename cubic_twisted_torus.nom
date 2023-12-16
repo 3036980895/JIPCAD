@@ -1,0 +1,82 @@
+### Bank ###
+bank slider
+    set speed 0.5 -1 1 0.1
+    set x 0 0 1 1
+    set y 0 0 1 1
+    set z 1 0 1 1
+    set azimuth 0 -180 180 1
+    set twist 180 -360 360 1
+    list(speed, x, y, z, azimuth, twist)
+endbank
+
+### Background ###
+backgroundcolor (0 0 0) endbackgroundcolor
+
+### Surfaces ###
+surface cubic_twisted_torus_surface_blue color (85/255 85/255 127/255) endsurface
+surface cubic_twisted_torus_surface_white color (189/255 186/255 199/255) endsurface
+
+### Cubic Twisted Torus ###
+circle cttpath (25 100) endcircle
+
+point ctt1p1 (5.5 5.5 0) endpoint
+point ctt1p2 (0.5 5.5 0) endpoint
+point ctt1p3 (0.5 5 0) endpoint
+point ctt1p4 (5 5 0) endpoint
+point ctt1p5 (5 0.5 0) endpoint
+point ctt1p6 (5.5 0.5 0) endpoint
+polyline ctt1cs (ctt1p1 ctt1p2 ctt1p3 ctt1p4 ctt1p5 ctt1p6 ctt1p1) endpolyline
+
+point ctt2p1 (-5.5 5.5 0) endpoint
+point ctt2p2 (-0.5 5.5 0) endpoint
+point ctt2p3 (-0.5 5 0) endpoint
+point ctt2p4 (-5 5 0) endpoint
+point ctt2p5 (-5 0.5 0) endpoint
+point ctt2p6 (-5.5 0.5 0) endpoint
+polyline ctt2cs (ctt2p6 ctt2p5 ctt2p4 ctt2p3 ctt2p2 ctt2p1 ctt2p6) endpolyline
+
+point ctt3p1 (-5.5 -5.5 0) endpoint
+point ctt3p2 (-0.5 -5.5 0) endpoint
+point ctt3p3 (-0.5 -5 0) endpoint
+point ctt3p4 (-5 -5 0) endpoint
+point ctt3p5 (-5 -0.5 0) endpoint
+point ctt3p6 (-5.5 -0.5 0) endpoint
+polyline ctt3cs (ctt3p1 ctt3p2 ctt3p3 ctt3p4 ctt3p5 ctt3p6 ctt3p1) endpolyline
+
+point ctt4p1 (5.5 -5.5 0) endpoint
+point ctt4p2 (0.5 -5.5 0) endpoint
+point ctt4p3 (0.5 -5 0) endpoint
+point ctt4p4 (5 -5 0) endpoint
+point ctt4p5 (5 -0.5 0) endpoint
+point ctt4p6 (5.5 -0.5 0) endpoint
+polyline ctt4cs (ctt4p6 ctt4p5 ctt4p4 ctt4p3 ctt4p2 ctt4p1 ctt4p6) endpolyline
+
+sweep cubic_twisted_torus_1
+    crosssection ctt1cs endcrosssection
+    path cttpath mintorsion azimuth ($slider.azimuth) twist ($slider.twist) endpath
+endsweep
+
+sweep cubic_twisted_torus_2
+    crosssection ctt2cs endcrosssection
+    path cttpath mintorsion azimuth ($slider.azimuth) twist ($slider.twist) endpath
+endsweep
+
+sweep cubic_twisted_torus_3
+    crosssection ctt3cs endcrosssection
+    path cttpath mintorsion azimuth ($slider.azimuth) twist ($slider.twist) endpath
+endsweep
+
+sweep cubic_twisted_torus_4
+    crosssection ctt4cs endcrosssection
+    path cttpath mintorsion azimuth ($slider.azimuth) twist ($slider.twist) endpath
+endsweep
+
+### Scene ###
+group scene
+    instance cubic_twisted_torus_1_inst cubic_twisted_torus_1 surface cubic_twisted_torus_surface_blue endinstance
+    instance cubic_twisted_torus_2_inst cubic_twisted_torus_2 surface cubic_twisted_torus_surface_white endinstance
+    instance cubic_twisted_torus_3_inst cubic_twisted_torus_3 surface cubic_twisted_torus_surface_blue endinstance
+    instance cubic_twisted_torus_4_inst cubic_twisted_torus_4 surface cubic_twisted_torus_surface_white endinstance
+endgroup
+
+instance scene_inst scene scale (0.25 0.25 0.25) rotate ($slider.x $slider.y $slider.z) (1.5 * $slider.speed * $frame) endinstance
